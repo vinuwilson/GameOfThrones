@@ -1,9 +1,10 @@
-package com.createfuture.takehome
+package com.createfuture.takehome.presenter
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.createfuture.takehome.R
 import com.createfuture.takehome.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
