@@ -6,6 +6,7 @@ import com.createfuture.takehome.domain.usecase.GetCharactersList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +33,7 @@ class CharactersViewModel @Inject constructor(
             _characters.update {
                 it.copy(
                     isLoading = false,
-                    characterList = getCharactersList.getCharactersList().ifEmpty { emptyList() }
+                    characterList = getCharactersList.getCharactersList().first().getOrDefault(emptyList())
                 )
             }
         }

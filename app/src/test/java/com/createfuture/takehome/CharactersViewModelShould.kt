@@ -1,15 +1,15 @@
 package com.createfuture.takehome
 
-import com.createfuture.takehome.data.models.ApiCharacterDto
+import com.createfuture.takehome.domain.models.CharacterModel
 import com.createfuture.takehome.domain.usecase.GetCharactersList
 import com.createfuture.takehome.presenter.home.CharacterState
 import com.createfuture.takehome.presenter.home.CharactersViewModel
 import com.createfuture.takehome.utils.BaseUnitTest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -19,7 +19,7 @@ class CharactersViewModelShould : BaseUnitTest() {
 
     private lateinit var viewModel: CharactersViewModel
     private val getCharacterList : GetCharactersList = mock()
-    private val charactersList : List<ApiCharacterDto> = mock()
+    private val charactersList : List<CharacterModel> = mock()
     private val expected = CharacterState(false, charactersList)
     private val exception = CharacterState()
 
@@ -49,19 +49,23 @@ class CharactersViewModelShould : BaseUnitTest() {
         assertEquals(exception, viewModel.characters.first())
     }
 
-    private suspend fun mockSuccessfulCase() {
+    private fun mockSuccessfulCase() {
 
         whenever(getCharacterList.getCharactersList()).thenReturn(
-            charactersList
+            flow {
+                emit(Result.success(charactersList))
+            }
         )
 
         viewModel = CharactersViewModel(getCharacterList)
     }
 
-    private suspend fun mockFailureCase() {
+    private fun mockFailureCase() {
 
         whenever(getCharacterList.getCharactersList()).thenReturn(
-            emptyList()
+            flow {
+                emit(Result.failure(RuntimeException("Something went wrong")))
+            }
         )
 
         viewModel = CharactersViewModel(getCharacterList)

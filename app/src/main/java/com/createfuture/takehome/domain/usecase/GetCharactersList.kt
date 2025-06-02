@@ -1,31 +1,24 @@
 package com.createfuture.takehome.domain.usecase
 
-import com.createfuture.takehome.data.models.ApiCharacterDto
-import com.google.gson.GsonBuilder
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Header
+import com.createfuture.takehome.domain.models.CharacterModel
+import com.createfuture.takehome.domain.models.CharactersListMapper
+import com.createfuture.takehome.domain.repository.CharactersRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetCharactersList @Inject constructor() {
+class GetCharactersList @Inject constructor(
+    private val charactersRepository: CharactersRepository,
+    private val charactersListMapper: CharactersListMapper
+) {
 
-    var retrofit: Retrofit =
-        Retrofit.Builder().baseUrl("https://yj8ke8qonl.execute-api.eu-west-1.amazonaws.com")
-            .addConverterFactory(
-                GsonConverterFactory.create(GsonBuilder().create())
-            ).client(OkHttpClient.Builder().build()).build()
-    var service: Service = retrofit.create(Service::class.java)
-
-    suspend fun getCharactersList(): List<ApiCharacterDto> {
-        return service.getCharacters("Bearer 754t!si@glcE2qmOFEcN")
+    fun getCharactersList(): Flow<Result<List<CharacterModel>>> {
+        return flow {
+            emit(Result.success(charactersListMapper.invoke(charactersRepository.getCharactersList().getOrNull()!!)))
+        }.catch {
+            emit(Result.failure(RuntimeException("Something went wrong")))
+        }
     }
 
-}
-
-
-interface Service {
-    @GET("/characters")
-    suspend fun getCharacters(@Header("Authorization") token: String): List<ApiCharacterDto>
 }
