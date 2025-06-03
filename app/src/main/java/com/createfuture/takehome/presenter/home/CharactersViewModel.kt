@@ -2,6 +2,7 @@ package com.createfuture.takehome.presenter.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.createfuture.takehome.domain.models.CharacterModel
 import com.createfuture.takehome.domain.usecase.GetCharactersList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,4 +40,19 @@ class CharactersViewModel @Inject constructor(
         }
     }
 
+    fun onSearch(value: String): List<CharacterModel> {
+
+        return if (_characters.value.characterList != null) {
+            try {
+                _characters.value.characterList!!.filter {
+                    it.name.contains(value, ignoreCase = true) ||
+                            it.name.contains(value, ignoreCase = true)
+                }
+            } catch (_: Exception) {
+                emptyList()
+            }
+        } else {
+            emptyList()
+        }
+    }
 }

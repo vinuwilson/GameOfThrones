@@ -1,5 +1,6 @@
 package com.createfuture.takehome.presenter.home
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,55 +13,134 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import com.createfuture.takehome.R
 import com.createfuture.takehome.domain.models.CharacterModel
+import com.createfuture.takehome.ui.theme.app_default_padding
 import com.createfuture.takehome.ui.theme.app_default_text_size
+import com.createfuture.takehome.ui.theme.app_large_padding
 import com.createfuture.takehome.ui.theme.app_large_text_size
-import com.createfuture.takehome.ui.theme.app_padding
+import com.createfuture.takehome.ui.theme.app_medium_padding
 import com.createfuture.takehome.ui.theme.app_small_padding
 import com.createfuture.takehome.ui.theme.divider_thickness
+import com.createfuture.takehome.ui.theme.searchbar_corner
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharactersListView(
-    charactersDetails: CharacterState
+    charactersDetails: CharacterState,
+    onSearch: (String) -> List<CharacterModel>
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        if (charactersDetails.isLoading) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary
-            )
-        } else {
-            SingleCharacterView(charactersDetails.characterList)
+    var searchQuery by remember { mutableStateOf("") }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    Scaffold(
+        topBar = {
+            SearchBar(
+                modifier = Modifier.padding(app_medium_padding),
+                inputField = {
+                    SearchBarDefaults.InputField(
+                        query = searchQuery,
+                        onQueryChange = { searchQuery = it },
+                        onSearch = { expanded = false },
+                        expanded = expanded,
+                        onExpandedChange = { expanded = it },
+                        placeholder = { Text(stringResource(R.string.search_placeholder)) },
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedPlaceholderColor = Color.White,
+                            focusedPlaceholderColor = Color.White,
+                            cursorColor = Color.White
+                        )
+                    )
+                },
+                expanded = expanded,
+                onExpandedChange = { expanded = it },
+                shape = RoundedCornerShape(searchbar_corner),
+                colors = SearchBarDefaults.colors(
+                    containerColor = Color.Gray,
+                    dividerColor = Color.Transparent
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = app_large_padding)
+                        .semantics { isTraversalGroup = true }
+                        .paint(
+                            painterResource(R.drawable.img_characters)
+                        )
+                ) {
+                    val filteredList = onSearch(searchQuery)
+                    SingleCharacterView(filteredList)
+                }
+
+            }
+        },
+        containerColor = Color.Transparent
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    vertical = innerPadding.calculateTopPadding(),
+                    horizontal = app_medium_padding
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (charactersDetails.isLoading) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary
+                )
+            } else {
+                SingleCharacterView(charactersDetails.characterList)
+            }
         }
     }
+
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SingleCharacterView(
     characterList: List<CharacterModel>?
 ) {
-    if (characterList != null) {
-        LazyColumn(
-            modifier = Modifier.padding(horizontal = app_padding)
-        ) {
+    val context = LocalContext.current
+
+    if (characterList != null && characterList.isNotEmpty()) {
+        LazyColumn {
             items(characterList) { character ->
                 Surface(
                     color = Color.Transparent,
                     modifier = Modifier
-                        .padding(vertical = app_padding)
+                        .padding(vertical = app_default_padding)
                         .fillMaxSize()
                 ) {
                     Column {
@@ -75,7 +155,7 @@ fun SingleCharacterView(
                             )
                             Column {
                                 Text(
-                                    "Seasons: ",
+                                    stringResource(R.string.seasons),
                                     color = Color.White,
                                     fontSize = app_default_text_size
                                 )
@@ -99,11 +179,11 @@ fun SingleCharacterView(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.size(app_padding))
+                        Spacer(modifier = Modifier.size(app_default_padding))
 
                         Row {
                             Text(
-                                text = "Culture: ",
+                                stringResource(R.string.culture),
                                 color = Color.White,
                                 fontSize = app_default_text_size
                             )
@@ -116,7 +196,7 @@ fun SingleCharacterView(
                         Spacer(modifier = Modifier.size(app_small_padding))
                         Row {
                             Text(
-                                "Born: ",
+                                stringResource(R.string.born),
                                 color = Color.White,
                                 fontSize = app_default_text_size
                             )
@@ -129,12 +209,12 @@ fun SingleCharacterView(
                         Spacer(modifier = Modifier.size(app_small_padding))
                         Row {
                             Text(
-                                text = "Died: ",
+                                stringResource(R.string.died),
                                 color = Color.White,
                                 fontSize = app_default_text_size
                             )
                             Text(
-                                text = if (character.died.isEmpty()) "Still Alive" else character.died,
+                                text = if (character.died.isEmpty()) stringResource(R.string.still_alive) else character.died,
                                 color = Color.Gray,
                                 fontSize = app_default_text_size
                             )
@@ -145,6 +225,14 @@ fun SingleCharacterView(
                     }
                 }
             }
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            Toast.makeText(
+                context,
+                R.string.error_message,
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }

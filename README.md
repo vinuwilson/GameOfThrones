@@ -1,15 +1,34 @@
-# Tech Test
+# Description
 
-You have been provided with an in-development Android app. The application uses an API to display lists of data about characters from the show "Game of Thrones". The project has some bugs and notable UI mismatches compared to the given designs.
+An Android application that retrieves and displays character information from the Game of Thrones series via an API.
 
-## Some issues that have been reported
+## Technology Stack:
 
-- App crashes on launch
-- Major discrepancies with the designs e.g. white padding
+### UI Layer
 
-## Improvements required
+* Jetpack Compose: For building declarative and reactive UIs.
+* Material Design 3: Ensures a modern, visually appealing interface.
 
-- A new feature needs to be added that would allow a user to search the list by character name.
+### Data Layer
+
+* Retrofit: To fetch data from the remote API.
+* Kotlin Coroutines & Flow: For asynchronous programming and reactive data streams.
+
+### Dependency Injection
+
+* Hilt: Simplifies dependency injection for a clean separation of concerns
+
+## Features:
+
+- Home Screen: Home screen that displays a list of Game of Thrones characters retrieved from the API
+- Search Option: Search functionality that allows the user to search for a specific character by character’s name.
+
+## 3. Architecture:
+
+###   Clean Architecture Layers:
+* Presentation Layer: Jetpack Compose UI interacting with ViewModels.
+* Domain Layer: Use Cases handling the business logic.
+* Data Layer: Repository pattern for data handling (remote and local).
 
 ## Resources
 
@@ -20,20 +39,13 @@ Requests to that endpoint will require the following header:
 
 Designs: 
 
-![img_design_1.png](app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fimg_design_1.png) ![img_design_2.png](app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fimg_design_2.png)
+![img_design_1.png](app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fimg_design_1.png) 
+![img_design_2.png](app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fimg_design_2.png)
 
-## Criteria on which we will assess your submission
+## Further enhancements
 
-- Closeness to designs (pragmatism is encouraged and pixel perfection is NOT required)
-- Code quality, included but not limited to, design patterns and organisation of the application code
-- Scalability
-- Error handling
-- Unit tests
+- Furthermore cosmetics and refactoring is an endless thought.
+- Support tablet UI
+- Offline support
 
-## Submission details
 
-We would like you to fix the app's user facing issues (both documented and undocumented), add the additional search feature and submit the codebase in a more scalable state.
-
-Please use version control. Import the supplied code as is to git and commit your changes through that. This will allow us to review the changes you have made.
-
-We expect you should spend no more than 3 hours on this work. We appreciate you taking the time to work on this and understand that sometimes it's not possible to spend as much time as you would like. If there are any aspects of the codebase you would have liked to work on with more time, please detail these in the ReadME file to give us some insight in to your process.
