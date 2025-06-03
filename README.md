@@ -39,8 +39,8 @@ Requests to that endpoint will require the following header:
 
 Designs: 
 
-![img_design_1.png](app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fimg_design_1.png) 
-![img_design_2.png](app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fimg_design_2.png)
+![img_design_1.png](app/src/main/res/drawable/img_design_1.png)
+![img_design_2.png](app/src/main/res/drawable/img_design_2.png)
 
 ## Further enhancements
 
