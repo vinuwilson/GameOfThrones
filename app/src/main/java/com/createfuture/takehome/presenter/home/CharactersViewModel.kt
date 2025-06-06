@@ -40,19 +40,11 @@ class CharactersViewModel @Inject constructor(
         }
     }
 
-    fun onSearch(value: String): List<CharacterModel> {
-
-        return if (_characters.value.characterList != null) {
-            try {
-                _characters.value.characterList!!.filter {
-                    it.name.contains(value, ignoreCase = true) ||
-                            it.name.contains(value, ignoreCase = true)
-                }
-            } catch (_: Exception) {
-                emptyList()
+    fun onSearch(value: String): List<CharacterModel> =
+        _characters.value.characterList?.let {
+            it.filter {
+                it.name.contains(value, ignoreCase = true)
             }
-        } else {
-            emptyList()
-        }
-    }
+        } ?: emptyList()
+
 }
